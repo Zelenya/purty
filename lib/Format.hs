@@ -5,10 +5,8 @@ module Format
 import "rio" RIO hiding (log, span)
 
 import qualified "base" Data.List.NonEmpty
-import qualified "purescript" Language.PureScript.CST
-import qualified Language.PureScript.CST as CST
-import qualified "purescript" Language.PureScript.CST.Print
-import qualified "purescript" Language.PureScript.CST.Types
+import qualified "purescript-cst" Language.PureScript.CST.Print
+import qualified "purescript-cst" Language.PureScript.CST.Types
 import qualified "this" Log
 import qualified "this" SourceRange
 import qualified "this" Span
@@ -27,15 +25,15 @@ type Prefix
 type Suffix
   = Utf8Builder
 
-useUnicodeForall :: Language.PureScript.CST.SourceToken -> Language.PureScript.CST.SourceToken
-useUnicodeForall fa = fa { Language.PureScript.CST.tokValue = token }
+useUnicodeForall :: Language.PureScript.CST.Types.SourceToken -> Language.PureScript.CST.Types.SourceToken
+useUnicodeForall fa = fa { Language.PureScript.CST.Types.tokValue = token }
    where
-     token = Language.PureScript.CST.TokForall Language.PureScript.CST.Unicode
+     token = Language.PureScript.CST.Types.TokForall Language.PureScript.CST.Types.Unicode
 
-useUnicodeColons :: Language.PureScript.CST.SourceToken -> Language.PureScript.CST.SourceToken
-useUnicodeColons fa = fa { Language.PureScript.CST.tokValue = token }
+useUnicodeColons :: Language.PureScript.CST.Types.SourceToken -> Language.PureScript.CST.Types.SourceToken
+useUnicodeColons fa = fa { Language.PureScript.CST.Types.tokValue = token }
    where
-     token = Language.PureScript.CST.TokDoubleColon Language.PureScript.CST.Unicode
+     token = Language.PureScript.CST.Types.TokDoubleColon Language.PureScript.CST.Types.Unicode
 
 adoBlock ::
   Log.Handle ->
@@ -394,16 +392,16 @@ commentTrailingFile ::
   Log.Handle ->
   (a -> Span.Span) ->
   Prefix ->
-  Language.PureScript.CST.Comment a ->
+  Language.PureScript.CST.Types.Comment a ->
   IO Utf8Builder
 commentTrailingFile log f prefix comment'' = case comment'' of
-  Language.PureScript.CST.Comment comment' -> do
+  Language.PureScript.CST.Types.Comment comment' -> do
     debug log "Comment" comment'' (Span.comment f comment'')
     pure (prefix <> display comment')
-  Language.PureScript.CST.Line _ -> do
+  Language.PureScript.CST.Types.Line _ -> do
     Log.debug log "Not formatting `Line`"
     pure blank
-  Language.PureScript.CST.Space _ -> do
+  Language.PureScript.CST.Types.Space _ -> do
     Log.debug log "Not formatting `Space`"
     pure blank
 
@@ -412,7 +410,7 @@ commentsTrailingFile ::
   Log.Handle ->
   (a -> Span.Span) ->
   Prefix ->
-  [Language.PureScript.CST.Comment a] ->
+  [Language.PureScript.CST.Types.Comment a] ->
   IO Utf8Builder
 commentsTrailingFile log f prefix commentsTrailing' = 
   case commentsTrailing'' of
@@ -424,9 +422,9 @@ commentsTrailingFile log f prefix commentsTrailing' =
     (foldMap (commentTrailingFile log f prefix) commentsTrailing'') <> pure newline
   where
     isWhiteSpace ct = case ct of 
-      Language.PureScript.CST.Comment _ -> False
-      Language.PureScript.CST.Line _ -> True
-      Language.PureScript.CST.Space _ -> True
+      Language.PureScript.CST.Types.Comment _ -> False
+      Language.PureScript.CST.Types.Line _ -> True
+      Language.PureScript.CST.Types.Space _ -> True
     commentsTrailing'' = List.dropWhileEnd isWhiteSpace commentsTrailing'
 
 constraint ::
@@ -666,7 +664,7 @@ declarations log indentation declarations' = case declarations' of
       ((pure newline <>) . foldMap (declaration log indentation indent))
       $ List.groupBy bothDerive declarations'
   where
-     bothDerive (CST.DeclDerive _ _ _ _) (CST.DeclDerive _ _ _ _) = True
+     bothDerive (Language.PureScript.CST.Types.DeclDerive _ _ _ _) (Language.PureScript.CST.Types.DeclDerive _ _ _ _) = True
      bothDerive _ _ = False
 
 delimited ::
@@ -746,12 +744,12 @@ doStatement log indentation indent' doStatement' = case doStatement' of
       indent = indent' <> indentation
     debug log "DoLet" doStatement' (Span.doStatement doStatement')
     case letBindings of
-      (Language.PureScript.CST.LetBindingName Span.SingleLine _) Data.List.NonEmpty.:| [] -> 
+      (Language.PureScript.CST.Types.LetBindingName Span.SingleLine _) Data.List.NonEmpty.:| [] -> 
         sourceToken log indent' blank let' <> (letBinding log indentation indent space blank) (Data.List.NonEmpty.head letBindings)
-      (Language.PureScript.CST.LetBindingPattern Span.SingleLine _ _ _) Data.List.NonEmpty.:| [] -> 
+      (Language.PureScript.CST.Types.LetBindingPattern Span.SingleLine _ _ _) Data.List.NonEmpty.:| [] -> 
         sourceToken log indent' blank let' <> (letBinding log indentation indent space blank) (Data.List.NonEmpty.head letBindings)
       -- Can this even happen?
-      (Language.PureScript.CST.LetBindingSignature Span.SingleLine _) Data.List.NonEmpty.:| [] -> 
+      (Language.PureScript.CST.Types.LetBindingSignature Span.SingleLine _) Data.List.NonEmpty.:| [] -> 
         sourceToken log indent' blank let' <> (letBinding log indentation indent space blank) (Data.List.NonEmpty.head letBindings)
       _ ->
         sourceToken log indent' blank let'
@@ -1547,20 +1545,20 @@ lambda log span indentation indent' lambda' = case lambda' of
       <> sourceToken log indent' blank arrow
       <> exprPrefix log span indentation indent' expr'
 
-getLetBindingName :: Language.PureScript.CST.LetBinding a -> Maybe CST.Ident
-getLetBindingName (Language.PureScript.CST.LetBindingName _ valueBindingFields') = Just $ CST.nameValue (CST.valName valueBindingFields')
-getLetBindingName (Language.PureScript.CST.LetBindingPattern _ _ _ _) = Nothing
-getLetBindingName (Language.PureScript.CST.LetBindingSignature _ labeled') = Just $ CST.nameValue (CST.lblLabel labeled')
+getLetBindingName :: Language.PureScript.CST.Types.LetBinding a -> Maybe Language.PureScript.CST.Types.Ident
+getLetBindingName (Language.PureScript.CST.Types.LetBindingName _ valueBindingFields') = Just $ Language.PureScript.CST.Types.nameValue (Language.PureScript.CST.Types.valName valueBindingFields')
+getLetBindingName (Language.PureScript.CST.Types.LetBindingPattern _ _ _ _) = Nothing
+getLetBindingName (Language.PureScript.CST.Types.LetBindingSignature _ labeled') = Just $ Language.PureScript.CST.Types.nameValue (Language.PureScript.CST.Types.lblLabel labeled')
 
-isLetBindingSignature :: Language.PureScript.CST.LetBinding a -> Bool
-isLetBindingSignature (Language.PureScript.CST.LetBindingName _ _) = False
-isLetBindingSignature (Language.PureScript.CST.LetBindingPattern _ _ _ _) = False
-isLetBindingSignature (Language.PureScript.CST.LetBindingSignature _ _) = True
+isLetBindingSignature :: Language.PureScript.CST.Types.LetBinding a -> Bool
+isLetBindingSignature (Language.PureScript.CST.Types.LetBindingName _ _) = False
+isLetBindingSignature (Language.PureScript.CST.Types.LetBindingPattern _ _ _ _) = False
+isLetBindingSignature (Language.PureScript.CST.Types.LetBindingSignature _ _) = True
 
-groupLetBindingsBySymbol :: Data.List.NonEmpty.NonEmpty (Language.PureScript.CST.LetBinding a) -> Data.List.NonEmpty.NonEmpty (Data.List.NonEmpty.NonEmpty (Language.PureScript.CST.LetBinding a))
+groupLetBindingsBySymbol :: Data.List.NonEmpty.NonEmpty (Language.PureScript.CST.Types.LetBinding a) -> Data.List.NonEmpty.NonEmpty (Data.List.NonEmpty.NonEmpty (Language.PureScript.CST.Types.LetBinding a))
 groupLetBindingsBySymbol = fmap signatureFirst . Data.List.NonEmpty.groupWith1 getLetBindingName
   where
-    signatureFirst :: Data.List.NonEmpty.NonEmpty (Language.PureScript.CST.LetBinding a) -> Data.List.NonEmpty.NonEmpty (Language.PureScript.CST.LetBinding a)
+    signatureFirst :: Data.List.NonEmpty.NonEmpty (Language.PureScript.CST.Types.LetBinding a) -> Data.List.NonEmpty.NonEmpty (Language.PureScript.CST.Types.LetBinding a)
     signatureFirst xs =
       let (sigs, defs) = Data.List.NonEmpty.partition isLetBindingSignature xs
       in Data.List.NonEmpty.fromList (sigs <> defs) -- it is safe to call `fromList` since we're merging the components of a non-empty list
@@ -1930,12 +1928,12 @@ row log span indentation indent' row' = case row' of
       <> type' log indentation indent' type''
       <> pure after
 
-unicodifySrcTok :: CST.SourceToken -> CST.SourceToken
-unicodifySrcTok separator = case CST.tokValue separator of
-    CST.TokDoubleColon _ ->
-      separator { CST.tokValue = CST.TokDoubleColon CST.Unicode }
-    CST.TokForall _ ->
-      separator { CST.tokValue = CST.TokForall CST.Unicode }
+unicodifySrcTok :: Language.PureScript.CST.Types.SourceToken -> Language.PureScript.CST.Types.SourceToken
+unicodifySrcTok separator = case Language.PureScript.CST.Types.tokValue separator of
+    Language.PureScript.CST.Types.TokDoubleColon _ ->
+      separator { Language.PureScript.CST.Types.tokValue = Language.PureScript.CST.Types.TokDoubleColon Language.PureScript.CST.Types.Unicode }
+    Language.PureScript.CST.Types.TokForall _ ->
+      separator { Language.PureScript.CST.Types.tokValue = Language.PureScript.CST.Types.TokForall Language.PureScript.CST.Types.Unicode }
     _ -> separator
 
 separated ::
@@ -2179,10 +2177,10 @@ where' log indentation indent' where''' = case where''' of
     withSuccessor :: Data.List.NonEmpty.NonEmpty a -> Data.List.NonEmpty.NonEmpty (a, Maybe a)
     withSuccessor xs = Data.List.NonEmpty.zip xs $ Data.List.NonEmpty.fromList ((Just <$> Data.List.NonEmpty.tail xs) <> [Nothing])
 
-    successorIsForSameName :: (Language.PureScript.CST.LetBinding a, Maybe (Language.PureScript.CST.LetBinding a)) -> Bool
+    successorIsForSameName :: (Language.PureScript.CST.Types.LetBinding a, Maybe (Language.PureScript.CST.Types.LetBinding a)) -> Bool
     successorIsForSameName (current, next) = maybe True (sameSymbol current) next
 
-    sameSymbol :: Language.PureScript.CST.LetBinding a -> Language.PureScript.CST.LetBinding a -> Bool
+    sameSymbol :: Language.PureScript.CST.Types.LetBinding a -> Language.PureScript.CST.Types.LetBinding a -> Bool
     sameSymbol = on (==) getLetBindingName
 
 wrapped ::

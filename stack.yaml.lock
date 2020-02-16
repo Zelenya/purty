@@ -33,27 +33,6 @@ packages:
   original:
     hackage: happy-1.19.9@sha256:f8c774230735a390c287b2980cfcd2703d24d8dde85a01ea721b7b4b4c82944f
 - completed:
-    hackage: language-javascript-0.7.0.0@sha256:3eab0262b8ac5621936a4beab6a0f97d0e00a63455a8b0e3ac1547b4088dae7d,3898
-    pantry-tree:
-      size: 2244
-      sha256: b0f28d836cb3fbde203fd7318a896c3a20acd8653a905e1950ae2d9a64bccebf
-  original:
-    hackage: language-javascript-0.7.0.0@sha256:3eab0262b8ac5621936a4beab6a0f97d0e00a63455a8b0e3ac1547b4088dae7d
-- completed:
-    hackage: purescript-0.13.6@sha256:4c17cdc0e8d51bb79f6fd3dd2beeda30dcf7297a76bbe3a37a49924e95d2b4fc,62060
-    pantry-tree:
-      size: 95494
-      sha256: afbab4292ca1243d0d52fd32ec48f8261ffb7f91c40922dd637688a700df88e9
-  original:
-    hackage: purescript-0.13.6@sha256:4c17cdc0e8d51bb79f6fd3dd2beeda30dcf7297a76bbe3a37a49924e95d2b4fc
-- completed:
-    hackage: repline-0.2.1.0@sha256:0f8e92d78e771afb9d41243c2b6ab9609fe02f94e676fae3caed66fa4ce09b18,1187
-    pantry-tree:
-      size: 323
-      sha256: f48833fb8a89fc4ede1b254bdfbc8937d82e694eb05bf936bf89293bab691700
-  original:
-    hackage: repline-0.2.1.0@sha256:0f8e92d78e771afb9d41243c2b6ab9609fe02f94e676fae3caed66fa4ce09b18
-- completed:
     hackage: rio-0.1.9.2@sha256:d46a202ae0930b496fd17fd9041d051d45645ab28a2f8d30cf483f50ccb21eb3,3588
     pantry-tree:
       size: 4617
@@ -61,26 +40,12 @@ packages:
   original:
     hackage: rio-0.1.9.2@sha256:d46a202ae0930b496fd17fd9041d051d45645ab28a2f8d30cf483f50ccb21eb3
 - completed:
-    hackage: semialign-1@sha256:f11b3d8d0f31a3556061ec0fb515575646d162f12c5b25a0f07c92679db7d862,2433
-    pantry-tree:
-      size: 466
-      sha256: e67b833b94b7fa23afbf7088833a38596cf35a2b93635604dd9e49d0389360fe
-  original:
-    hackage: semialign-1@sha256:f11b3d8d0f31a3556061ec0fb515575646d162f12c5b25a0f07c92679db7d862
-- completed:
     hackage: teardown-0.5.0.1@sha256:b7a6812637f79d81632bb7adebc5ad9a96fffacf3e5f655d5bf21728bd3786f9,2868
     pantry-tree:
       size: 742
       sha256: 386c90aef420c528d67581e2108bacbb648b8ca6d1bbd447e5f3a306db4b236c
   original:
     hackage: teardown-0.5.0.1@sha256:b7a6812637f79d81632bb7adebc5ad9a96fffacf3e5f655d5bf21728bd3786f9
-- completed:
-    hackage: these-1.0.1@sha256:7ff0f309978604015d978fb155ac4dc10a98e3d70a99aa2be8f755eb0cca4324,3191
-    pantry-tree:
-      size: 351
-      sha256: 3257ef64424e9a07e2ae750eff7affcd459811c4669cb67a5e4f43ab833c5aba
-  original:
-    hackage: these-1.0.1@sha256:7ff0f309978604015d978fb155ac4dc10a98e3d70a99aa2be8f755eb0cca4324
 snapshots:
 - completed:
     size: 499889
