@@ -4,10 +4,10 @@ module Format
 
 import "rio" RIO hiding (log, span)
 
-import qualified "base" Data.List.NonEmpty
 import qualified "purescript-cst" Language.PureScript.CST.Print
 import qualified "purescript-cst" Language.PureScript.CST.Types
 import qualified "this" Log
+import qualified "rio" RIO.NonEmpty
 import qualified "this" SourceRange
 import qualified "this" Span
 import qualified Data.List as List
@@ -744,20 +744,20 @@ doStatement log indentation indent' doStatement' = case doStatement' of
       indent = indent' <> indentation
     debug log "DoLet" doStatement' (Span.doStatement doStatement')
     case letBindings of
-      (Language.PureScript.CST.Types.LetBindingName Span.SingleLine _) Data.List.NonEmpty.:| [] -> 
-        sourceToken log indent' blank let' <> (letBinding log indentation indent space blank) (Data.List.NonEmpty.head letBindings)
-      (Language.PureScript.CST.Types.LetBindingPattern Span.SingleLine _ _ _) Data.List.NonEmpty.:| [] -> 
-        sourceToken log indent' blank let' <> (letBinding log indentation indent space blank) (Data.List.NonEmpty.head letBindings)
+      (Language.PureScript.CST.Types.LetBindingName Span.SingleLine _) RIO.NonEmpty.:| [] -> 
+        sourceToken log indent' blank let' <> (letBinding log indentation indent space blank) (RIO.NonEmpty.head letBindings)
+      (Language.PureScript.CST.Types.LetBindingPattern Span.SingleLine _ _ _) RIO.NonEmpty.:| [] -> 
+        sourceToken log indent' blank let' <> (letBinding log indentation indent space blank) (RIO.NonEmpty.head letBindings)
       -- Can this even happen?
-      (Language.PureScript.CST.Types.LetBindingSignature Span.SingleLine _) Data.List.NonEmpty.:| [] -> 
-        sourceToken log indent' blank let' <> (letBinding log indentation indent space blank) (Data.List.NonEmpty.head letBindings)
+      (Language.PureScript.CST.Types.LetBindingSignature Span.SingleLine _) RIO.NonEmpty.:| [] -> 
+        sourceToken log indent' blank let' <> (letBinding log indentation indent space blank) (RIO.NonEmpty.head letBindings)
       _ ->
         sourceToken log indent' blank let'
           <> foldMap
             (letBinding log indentation indent (newline <> indent) blank)
-            (Data.List.NonEmpty.init letBindings)
+            (RIO.NonEmpty.init letBindings)
           <> (letBinding log indentation indent (newline <> indent) blank)
-            (Data.List.NonEmpty.last letBindings)
+            (RIO.NonEmpty.last letBindings)
 
 export ::
   Log.Handle ->
@@ -1555,13 +1555,13 @@ isLetBindingSignature (Language.PureScript.CST.Types.LetBindingName _ _) = False
 isLetBindingSignature (Language.PureScript.CST.Types.LetBindingPattern _ _ _ _) = False
 isLetBindingSignature (Language.PureScript.CST.Types.LetBindingSignature _ _) = True
 
-groupLetBindingsBySymbol :: Data.List.NonEmpty.NonEmpty (Language.PureScript.CST.Types.LetBinding a) -> Data.List.NonEmpty.NonEmpty (Data.List.NonEmpty.NonEmpty (Language.PureScript.CST.Types.LetBinding a))
-groupLetBindingsBySymbol = fmap signatureFirst . Data.List.NonEmpty.groupWith1 getLetBindingName
+groupLetBindingsBySymbol :: RIO.NonEmpty.NonEmpty (Language.PureScript.CST.Types.LetBinding a) -> RIO.NonEmpty.NonEmpty (RIO.NonEmpty.NonEmpty (Language.PureScript.CST.Types.LetBinding a))
+groupLetBindingsBySymbol = fmap signatureFirst . RIO.NonEmpty.groupWith1 getLetBindingName
   where
-    signatureFirst :: Data.List.NonEmpty.NonEmpty (Language.PureScript.CST.Types.LetBinding a) -> Data.List.NonEmpty.NonEmpty (Language.PureScript.CST.Types.LetBinding a)
+    signatureFirst :: RIO.NonEmpty.NonEmpty (Language.PureScript.CST.Types.LetBinding a) -> RIO.NonEmpty.NonEmpty (Language.PureScript.CST.Types.LetBinding a)
     signatureFirst xs =
-      let (sigs, defs) = Data.List.NonEmpty.partition isLetBindingSignature xs
-      in Data.List.NonEmpty.fromList (sigs <> defs) -- it is safe to call `fromList` since we're merging the components of a non-empty list
+      let (sigs, defs) = RIO.NonEmpty.partition isLetBindingSignature xs
+      in fromMaybe xs $ RIO.NonEmpty.nonEmpty (sigs <> defs)
 
 letBinding ::
   Log.Handle ->
@@ -1608,14 +1608,14 @@ letIn log span indentation indent' letIn' = case letIn' of
     sourceToken log indent' blank let'
       <> foldMap
         (letBinding log indentation indent prefix blank)
-        (Data.List.NonEmpty.init letBindings)
+        (RIO.NonEmpty.init letBindings)
       <> letBinding
         log
         indentation
         indent
         prefix
         blank
-        (Data.List.NonEmpty.last letBindings)
+        (RIO.NonEmpty.last letBindings)
       <> pure inPrefix
       <> sourceToken log indent' blank in'
       <> pure prefix
@@ -2167,22 +2167,25 @@ where' log indentation indent' where''' = case where''' of
             <> foldMap
               (\p@(binding, _) ->
                   letBinding log indentation indentI (newline <> indentI) (if successorIsForSameName p then mempty else newline) binding)
-              (Data.List.NonEmpty.init $ withSuccessor groupedLetBindings)
+              (RIO.NonEmpty.init $ withSuccessor groupedLetBindings)
             <> (letBinding log indentation indentI (newline <> indentI) blank)
-              (Data.List.NonEmpty.last groupedLetBindings)
+              (RIO.NonEmpty.last groupedLetBindings)
         )
         letBindings''
   where
     -- pairs each element with a `Just` of its successor, the last element is paired with `Nothing`
-    withSuccessor :: Data.List.NonEmpty.NonEmpty a -> Data.List.NonEmpty.NonEmpty (a, Maybe a)
-    withSuccessor xs = Data.List.NonEmpty.zip xs $ Data.List.NonEmpty.fromList ((Just <$> Data.List.NonEmpty.tail xs) <> [Nothing])
+    withSuccessor :: RIO.NonEmpty.NonEmpty a -> RIO.NonEmpty.NonEmpty (a, Maybe a)
+    withSuccessor xs = 
+      RIO.NonEmpty.zip xs 
+      $ fromMaybe (Nothing RIO.NonEmpty.:| []) 
+      $ RIO.NonEmpty.nonEmpty ((Just <$> RIO.NonEmpty.tail xs) <> [Nothing])
 
     successorIsForSameName :: (Language.PureScript.CST.Types.LetBinding a, Maybe (Language.PureScript.CST.Types.LetBinding a)) -> Bool
     successorIsForSameName (current, next) = maybe True (sameSymbol current) next
 
     sameSymbol :: Language.PureScript.CST.Types.LetBinding a -> Language.PureScript.CST.Types.LetBinding a -> Bool
     sameSymbol = on (==) getLetBindingName
-
+    
 wrapped ::
   (Show a) =>
   Log.Handle ->
