@@ -12,13 +12,6 @@ packages:
   original:
     hackage: componentm-0.0.0.2@sha256:d15df070056810a512183021d95af6fc99a4ff96a26352de4fe46b92ebc84728
 - completed:
-    hackage: dhall-1.23.0@sha256:12a699b7ed30ee40b1a3e05dfd3eef1b053914a5aebeb2f76cc568306570e51b,30737
-    pantry-tree:
-      size: 127759
-      sha256: d5c6ff3a3628ac42975364405f9c0dfac4ad0286667e2535839b4806e5438109
-  original:
-    hackage: dhall-1.23.0@sha256:12a699b7ed30ee40b1a3e05dfd3eef1b053914a5aebeb2f76cc568306570e51b
-- completed:
     hackage: dhall-json-1.2.8@sha256:e098f4f7891ea9ab2ac38c126614e07c821166dea47f10d876eaeda0ad5ceb11,3722
     pantry-tree:
       size: 632
@@ -33,12 +26,12 @@ packages:
   original:
     hackage: happy-1.19.9@sha256:f8c774230735a390c287b2980cfcd2703d24d8dde85a01ea721b7b4b4c82944f
 - completed:
-    hackage: rio-0.1.9.2@sha256:d46a202ae0930b496fd17fd9041d051d45645ab28a2f8d30cf483f50ccb21eb3,3588
+    hackage: rio-0.1.14.0@sha256:076670fe8dc2a23486336e1beb714712447511e88df3480819db2a3312a750a9,3633
     pantry-tree:
-      size: 4617
-      sha256: c9dbd03053dc698d66549146dbb9e370b29045a48be495b088877bf53da01a29
+      size: 4745
+      sha256: 785cdaeadab4f26e21a644417924e9b0f23bcfff39f5ed8e2570eb6f32b668ae
   original:
-    hackage: rio-0.1.9.2@sha256:d46a202ae0930b496fd17fd9041d051d45645ab28a2f8d30cf483f50ccb21eb3
+    hackage: rio-0.1.14.0@sha256:076670fe8dc2a23486336e1beb714712447511e88df3480819db2a3312a750a9
 - completed:
     hackage: teardown-0.5.0.1@sha256:b7a6812637f79d81632bb7adebc5ad9a96fffacf3e5f655d5bf21728bd3786f9,2868
     pantry-tree:
@@ -46,6 +39,27 @@ packages:
       sha256: 386c90aef420c528d67581e2108bacbb648b8ca6d1bbd447e5f3a306db4b236c
   original:
     hackage: teardown-0.5.0.1@sha256:b7a6812637f79d81632bb7adebc5ad9a96fffacf3e5f655d5bf21728bd3786f9
+- completed:
+    hackage: typed-process-0.2.6.0@sha256:c901c13d491441830eb23132ad6968243a56b98161629d260a26c0b13c735fcd,2136
+    pantry-tree:
+      size: 529
+      sha256: 2ef79f15f1f391e49dc522076f6d1584c7b305bf2aaa0dfec4dc0d4b61f31111
+  original:
+    hackage: typed-process-0.2.6.0@sha256:c901c13d491441830eb23132ad6968243a56b98161629d260a26c0b13c735fcd
+- completed:
+    hackage: unliftio-0.2.12@sha256:b089fbc2ff2628a963c2c4b12143f2020874e3e5144ffd6c62b25639a0ca1483,3325
+    pantry-tree:
+      size: 2229
+      sha256: 4971b43f3d473eff868eb1a0c359729b49f1779e78c462ba45ef0d1eda677699
+  original:
+    hackage: unliftio-0.2.12@sha256:b089fbc2ff2628a963c2c4b12143f2020874e3e5144ffd6c62b25639a0ca1483
+- completed:
+    hackage: semigroupoids-5.3.4@sha256:120873dfa8084ec92745c766336e90d648c347ab99ce55329d5af36dbd3732ba,7596
+    pantry-tree:
+      size: 1990
+      sha256: 2b3db5fbe5f68fc52532e4fa988d01d69c8845c49714c9c31a47309baa1df836
+  original:
+    hackage: semigroupoids-5.3.4@sha256:120873dfa8084ec92745c766336e90d648c347ab99ce55329d5af36dbd3732ba
 snapshots:
 - completed:
     size: 499889
