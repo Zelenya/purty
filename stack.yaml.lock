@@ -19,20 +19,6 @@ packages:
   original:
     hackage: happy-1.19.9@sha256:f8c774230735a390c287b2980cfcd2703d24d8dde85a01ea721b7b4b4c82944f
 - completed:
-    hackage: path-0.7.0@sha256:f1629c247f4673650046a690f07958343abc63adc035b451610a550a8ac6055e,3177
-    pantry-tree:
-      size: 873
-      sha256: a76f61250599f9c6acbc4bb8a1b2f6530e6cd7f4769f605f44e9e98c33aef186
-  original:
-    hackage: path-0.7.0@sha256:f1629c247f4673650046a690f07958343abc63adc035b451610a550a8ac6055e
-- completed:
-    hackage: path-io-1.6.0@sha256:5d35a08c22a8f94c1ac0715450ff1c7413e1dd1c5580ac14b728abcaeb9d99cf,2668
-    pantry-tree:
-      size: 364
-      sha256: bf1cf789edeb156768d94c3263f2645db7d0893b7244c82e8f1122e878afc6f9
-  original:
-    hackage: path-io-1.6.0@sha256:5d35a08c22a8f94c1ac0715450ff1c7413e1dd1c5580ac14b728abcaeb9d99cf
-- completed:
     hackage: rio-0.1.14.0@sha256:076670fe8dc2a23486336e1beb714712447511e88df3480819db2a3312a750a9,3633
     pantry-tree:
       size: 4745
