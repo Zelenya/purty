@@ -12,12 +12,40 @@ packages:
   original:
     hackage: componentm-0.0.0.2@sha256:d15df070056810a512183021d95af6fc99a4ff96a26352de4fe46b92ebc84728
 - completed:
+    hackage: ghc-lib-parser-8.8.2.20200205@sha256:343f889f7b29f5ec07cf0d18d2a53f250fa5c002b6468a6a05b385d0191b8d34,8408
+    pantry-tree:
+      size: 18102
+      sha256: 3749da93f98300b35fe20e4947478a9ec081405e700e48d9d1998718c55e7eb2
+  original:
+    hackage: ghc-lib-parser-8.8.2.20200205@sha256:343f889f7b29f5ec07cf0d18d2a53f250fa5c002b6468a6a05b385d0191b8d34
+- completed:
+    hackage: ghc-lib-parser-ex-8.8.5.1@sha256:db6c632d986390660f949d4f89bcacaa2bf1d6ab991886f0a627171b5a3a1057,2502
+    pantry-tree:
+      size: 1085
+      sha256: 50671cd663bc20a14abff01f146579d86521a43a5e0c588d0b87c05607f35eda
+  original:
+    hackage: ghc-lib-parser-ex-8.8.5.1@sha256:db6c632d986390660f949d4f89bcacaa2bf1d6ab991886f0a627171b5a3a1057
+- completed:
     hackage: happy-1.19.9@sha256:f8c774230735a390c287b2980cfcd2703d24d8dde85a01ea721b7b4b4c82944f,4667
     pantry-tree:
       size: 7980
       sha256: 1f1d622f6e773e7a674da6364b755714c76c3fbb3c7a4e65deaf07242fc15211
   original:
     hackage: happy-1.19.9@sha256:f8c774230735a390c287b2980cfcd2703d24d8dde85a01ea721b7b4b4c82944f
+- completed:
+    hackage: haskell-src-exts-1.23.0@sha256:1bb9f7e97d569e56973133cb075fdcc1bfd11f90d94b035b5cf44814bb39a73d,4541
+    pantry-tree:
+      size: 97804
+      sha256: 8e5bc885533431db9bf75e9609f6b80b56ab0c289a903d701f8628e78322afd0
+  original:
+    hackage: haskell-src-exts-1.23.0@sha256:1bb9f7e97d569e56973133cb075fdcc1bfd11f90d94b035b5cf44814bb39a73d
+- completed:
+    hackage: hlint-2.2.11@sha256:f4eef0d718264824254bf375a85a91a8756b20c4f7d2a4854ffe4e69e8bd1679,4069
+    pantry-tree:
+      size: 5014
+      sha256: f75f1e4185337aa32610ec7710d12e5d2b9c79292fa8a08348580861c99c6826
+  original:
+    hackage: hlint-2.2.11@sha256:f4eef0d718264824254bf375a85a91a8756b20c4f7d2a4854ffe4e69e8bd1679
 - completed:
     hackage: rio-0.1.14.0@sha256:076670fe8dc2a23486336e1beb714712447511e88df3480819db2a3312a750a9,3633
     pantry-tree:
