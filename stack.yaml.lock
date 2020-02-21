@@ -5,6 +5,20 @@
 
 packages:
 - completed:
+    hackage: HsYAML-0.2.1.0@sha256:e4677daeba57f7a1e9a709a1f3022fe937336c91513e893166bd1f023f530d68,5311
+    pantry-tree:
+      size: 1340
+      sha256: 21f61bf9cad31674126b106071dd9b852e408796aeffc90eec1792f784107eff
+  original:
+    hackage: HsYAML-0.2.1.0@sha256:e4677daeba57f7a1e9a709a1f3022fe937336c91513e893166bd1f023f530d68
+- completed:
+    hackage: HsYAML-aeson-0.2.0.0@sha256:04796abfc01cffded83f37a10e6edba4f0c0a15d45bef44fc5bb4313d9c87757,1791
+    pantry-tree:
+      size: 234
+      sha256: 67cc9ba17c79e71d3abdb465a3ee2825477856fff3b8b7d543cbbbefdae9a9d9
+  original:
+    hackage: HsYAML-aeson-0.2.0.0@sha256:04796abfc01cffded83f37a10e6edba4f0c0a15d45bef44fc5bb4313d9c87757
+- completed:
     hackage: componentm-0.0.0.2@sha256:d15df070056810a512183021d95af6fc99a4ff96a26352de4fe46b92ebc84728,2103
     pantry-tree:
       size: 629
@@ -46,6 +60,13 @@ packages:
       sha256: f75f1e4185337aa32610ec7710d12e5d2b9c79292fa8a08348580861c99c6826
   original:
     hackage: hlint-2.2.11@sha256:f4eef0d718264824254bf375a85a91a8756b20c4f7d2a4854ffe4e69e8bd1679
+- completed:
+    hackage: ormolu-0.0.3.1@sha256:10fbcc0adc652c8df631313e8e9c523196bb2e0ef53d883c82155067516c571d,7802
+    pantry-tree:
+      size: 64583
+      sha256: b46ee023613c0ae4d2188cdb35117f5585bda69aa3afac9421eb25e2468ff985
+  original:
+    hackage: ormolu-0.0.3.1@sha256:10fbcc0adc652c8df631313e8e9c523196bb2e0ef53d883c82155067516c571d
 - completed:
     hackage: rio-0.1.14.0@sha256:076670fe8dc2a23486336e1beb714712447511e88df3480819db2a3312a750a9,3633
     pantry-tree:
