@@ -1,12 +1,20 @@
 # Changelog
 
-## Unreleased
+## 5.0.1
+
+This is a smaller release.
+All of the changes here should be internal to the project.
 
 ### Additions
 
 ### Changes
 
-* [Add a `version` mode](https://gitlab.com/joneshf/purty/issues/169)
+* [Switch from `stylish-haskell` to `ormolu`](https://gitlab.com/joneshf/purty/issues/157)
+* [Update `hlint`](https://gitlab.com/joneshf/purty/issues/163)
+* [Drop `path-io` in exchange for `pathwalk`](https://gitlab.com/joneshf/purty/issues/165)
+* [Move language extensions to the files](https://gitlab.com/joneshf/purty/issues/166)
+* [Clean up argument handling](https://gitlab.com/joneshf/purty/issues/170)
+* [Validate with `ormolu`](https://gitlab.com/joneshf/purty/issues/171)
 
 ### Deletions
 
