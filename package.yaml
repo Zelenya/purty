@@ -60,7 +60,6 @@ tests:
       - tasty == 1.2
       - tasty-golden == 2.3.2
       - tasty-hunit == 0.10.0.1
-      - text == 1.2.3.1
     main: Main.hs
     source-dirs: test/golden
 version: 5.0.1
