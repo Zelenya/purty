@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Additions
+
+### Changes
+
+* [Add a `version` mode](https://gitlab.com/joneshf/purty/issues/169)
+* [Install `hlint` binary](https://gitlab.com/joneshf/purty/issues/173)
+
+### Deletions
+
 ## 5.0.1
 
 This is a smaller release.
