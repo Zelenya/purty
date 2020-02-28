@@ -23,6 +23,6 @@ Build purty:
     - ci/install-stack.sh --verbose
     - stack setup
   script:
-    - make bootstrap
+    - .build/bazel build //...
     - make lint test STACK_BUILDFLAGS=--coverage
   stage: build
