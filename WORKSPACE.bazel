@@ -68,7 +68,9 @@ stack_snapshot(
         "pathwalk",
         "purescript-cst",
         "rio",
-        "text",
+        "tasty",
+        "tasty-golden",
+        "tasty-hunit",
     ],
     tools = [
         "@happy",
