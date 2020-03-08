@@ -68,6 +68,7 @@ haskell_library(
         "version/purty",
     ],
     name = "purty",
+    src_strip_prefix = "lib",
     srcs = [
         "lib/Annotation.hs",
         "lib/Args.hs",
@@ -96,6 +97,7 @@ haskell_test(
         "@stackage//:tasty-hunit",
     ],
     name = "purty-golden",
+    src_strip_prefix = "test/golden",
     srcs = [
         "test/golden/Main.hs",
     ],
