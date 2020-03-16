@@ -9,12 +9,12 @@ import Control.Monad.Eff.Console
   ( CONSOLE
   )
 
-foreign import data FOO :: Effect
+foreign import data FOO ∷ Effect
 
-foreign import main_ :: forall e. Eff ( console :: CONSOLE, foo :: FOO | e ) Unit
+foreign import main_ ∷ ∀ e. Eff ( console ∷ CONSOLE, foo ∷ FOO | e ) Unit
 
-main ::
-  forall e.
-  Eff ( console :: CONSOLE, foo :: FOO | e ) Unit ->
-  Eff ( console :: CONSOLE, foo :: FOO | e ) Unit
+main ∷
+  ∀ e.
+  Eff ( console ∷ CONSOLE, foo ∷ FOO | e ) Unit ->
+  Eff ( console ∷ CONSOLE, foo ∷ FOO | e ) Unit
 main _ = pure unit

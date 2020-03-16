@@ -2,19 +2,19 @@ module ParenthesesIndentation where
 
 foreign import kind Foo
 
-foreign import data Bar ::
+foreign import data Bar ∷
   ( Foo ->
     Foo
   )
 
-instance bazQux ::
+instance bazQux ∷
   ( Baz a
   , Baz
       b
   ) =>
   Baz (Qux a b)
 
-foo ::
+foo ∷
   ( Array
       Int
   )
@@ -26,7 +26,7 @@ foo =
     ]
   )
 
-bar ::
+bar ∷
   Either (Int -> Int)
     ( Int ->
       Int
@@ -40,8 +40,8 @@ bar x = case x of
       z
   ) -> z
 
-baz ::
-  forall f.
+baz ∷
+  ∀ f.
   ( Applicative
       f
   ) =>

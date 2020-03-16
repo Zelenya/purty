@@ -26,7 +26,7 @@ infix 0 y as !
 foreign import kind Bar
 
 -- A Line comment on an instance
-instance foo ::
+instance foo ∷
   Foo
 
 {- A Block comment on a synonym -}
@@ -37,5 +37,5 @@ type Z
 x = X
 
 {- A block comment on a type -}
-y :: Y -> Y -> Y
+y ∷ Y -> Y -> Y
 y _ _ = Y

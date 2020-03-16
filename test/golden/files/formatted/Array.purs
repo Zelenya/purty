@@ -1,6 +1,6 @@
 module Array where
 
-f :: Array { x :: Int, y :: Boolean }
+f ∷ Array { x ∷ Int, y ∷ Boolean }
 f =
   [ { x: 1
     , y:
@@ -12,7 +12,7 @@ f =
     }
   ]
 
-g :: Array Boolean
+g ∷ Array Boolean
 g =
   [ ( true || false && true
     )
@@ -23,10 +23,10 @@ g =
     )
   ]
 
-h :: Array Int
+h ∷ Array Int
 h = [ 1, 2, 3, 4, 5, 6 ]
 
-i :: Array String
+i ∷ Array String
 i =
   [ "hello"
   , """
@@ -36,7 +36,7 @@ there"""
               is quite the `Array String` """
   ]
 
-j :: Array (Array (Array Int))
+j ∷ Array (Array (Array Int))
 j =
   [ [ [ 1, 2, 3, 4, 5 ], [ 6, 7 ] ]
   , [ [ 8 ]
@@ -50,7 +50,7 @@ j =
     ]
   ]
 
-k :: Array (Array Int)
+k ∷ Array (Array Int)
 k =
   [ identity
       [ 1

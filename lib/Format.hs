@@ -6,6 +6,7 @@ import "rio" RIO hiding (log, span)
 
 import qualified "base" Data.List.NonEmpty
 import qualified "purescript" Language.PureScript.CST
+import qualified Language.PureScript.CST as CST
 import qualified "this" Log
 import qualified "this" SourceRange
 import qualified "this" Span
@@ -21,6 +22,21 @@ type Prefix
 
 type Suffix
   = Utf8Builder
+
+useUnicodeForall :: Language.PureScript.CST.SourceToken -> Language.PureScript.CST.SourceToken
+useUnicodeForall fa = fa { Language.PureScript.CST.tokValue = token }
+   where
+     token = Language.PureScript.CST.TokForall Language.PureScript.CST.Unicode
+
+useUnicodeColons :: Language.PureScript.CST.SourceToken -> Language.PureScript.CST.SourceToken
+useUnicodeColons fa = fa { Language.PureScript.CST.tokValue = token }
+   where
+     token = Language.PureScript.CST.TokDoubleColon Language.PureScript.CST.Unicode
+
+-- useUnicodeColons2 :: Language.PureScript.CST.Declaration Span.Span -> Language.PureScript.CST.Declaration Span.Span
+-- useUnicodeColons2 fa = fa { Language.PureScript.CST.tokValue = token }
+--    where
+--      token = Language.PureScript.CST.TokDoubleColon Language.PureScript.CST.Unicode
 
 adoBlock ::
   Log.Handle ->
@@ -188,7 +204,7 @@ binder log indentation indent' binder'' = case binder'' of
           (indent', space)
     debug log "BinderTyped" binder'' span
     binder log indentation indent' binder'
-      <> sourceToken log indent' space colons
+      <> sourceToken log indent' space (useUnicodeColons colons)
       <> pure prefix
       <> type' log indentation indent type''
   Language.PureScript.CST.BinderVar span name' -> do
@@ -530,7 +546,7 @@ declaration log indentation indent'' declaration' = case declaration' of
       <> foldMap (sourceToken log indent'' space) newtype'
       <> pure space
       <> instanceHead log indentation indent'' instanceHead'
-      <> pure newline
+      -- <> pure newline
   Language.PureScript.CST.DeclFixity span fixityFields' -> do
     debug log "DeclFixity" declaration' span
     fixityFields log indent'' fixityFields'
@@ -930,7 +946,7 @@ expr log indentation indent'' expr'' = case expr'' of
           (indent'', space)
     debug log "ExprTyped" expr'' span
     expr log indentation indent'' expr'
-      <> sourceToken log indent'' space colons
+      <> sourceToken log indent'' space (useUnicodeColons colons)
       <> pure prefix
       <> type' log indentation indent' type''
 
@@ -1079,7 +1095,7 @@ guarded log indentation indent' guarded' = case guarded' of
       guardedExprs
   Language.PureScript.CST.Unconditional separator where'' -> do
     debug log "Unconditional" guarded' (Span.guarded guarded')
-    sourceToken log indent' space separator
+    sourceToken log indent' space (unicodifySrcTok separator)
       <> where' log indentation indent' where''
 
 guardedExpr ::
@@ -1103,7 +1119,7 @@ guardedExpr log indentation indent' guardedExpr' = case guardedExpr' of
         (patternGuard log indentation indent)
         patternGuards
       <> pure space
-      <> sourceToken log indent' blank separator
+      <> sourceToken log indent' blank (unicodifySrcTok separator)
       <> where' log indentation indent' where''
 
 ifThenElse ::
@@ -1323,7 +1339,7 @@ instanceHead log indentation indent'' instanceHead' = case instanceHead' of
     debug log "InstanceHead" instanceHead' span
     sourceToken log indent'' blank instance''
       <> name log indent'' space name'
-      <> sourceToken log indent'' space colons
+      <> sourceToken log indent'' space (useUnicodeColons colons)
       <> foldMap
         (\(constraints, arrow) ->
           pure prefix
@@ -1408,7 +1424,7 @@ labeled log indentation indent' f g h i labeled' = case labeled' of
           (indent', space)
     debug log "Labeled" labeled' span
     g label'
-      <> sourceToken log indent space separator
+      <> sourceToken log indent space (unicodifySrcTok separator)
       <> pure prefix
       <> i indent value
 
@@ -1853,6 +1869,14 @@ row log span indentation indent row' = case row' of
       <> type' log indentation indent type''
       <> pure after
 
+unicodifySrcTok :: CST.SourceToken -> CST.SourceToken
+unicodifySrcTok separator = case CST.tokValue separator of
+    CST.TokDoubleColon _ -> 
+      separator { CST.tokValue = CST.TokDoubleColon CST.Unicode }
+    CST.TokForall _ -> 
+      separator { CST.tokValue = CST.TokForall CST.Unicode }
+    _ -> separator
+
 separated ::
   forall a.
   (Show a) =>
@@ -1878,8 +1902,9 @@ separated log span indent prefix' f separated' = case separated' of
             newline <> indent
           Span.SingleLine ->
             blank
+
       pure prefix
-        <> sourceToken log indent blank separator
+        <> sourceToken log indent blank (unicodifySrcTok separator)
         <> pure prefix'
         <> f value
 
@@ -1970,7 +1995,7 @@ type' log indentation indent' type''' = case type''' of
         Span.SingleLine ->
           space
     debug log "TypeForall" type''' span
-    sourceToken log indent' blank forall'
+    sourceToken log indent' blank (useUnicodeForall forall')
       <> foldMap
         (\typeVarBinding' ->
           pure space
@@ -1993,7 +2018,7 @@ type' log indentation indent' type''' = case type''' of
     debug log "TypeKinded" type''' span
     type' log indentation indent' type''
       <> pure space
-      <> sourceToken log indent' blank colons
+      <> sourceToken log indent' blank (useUnicodeColons colons)
       <> pure prefix
       <> kind log indentation indent kind'
   Language.PureScript.CST.TypeOp span type1 op type2 -> do
@@ -2079,7 +2104,7 @@ where' log indentation indent' where''' = case where''' of
           pure (newline <> indent)
             <> sourceToken log indent blank where''
             <> foldMap
-              (letBinding log indentation indent (newline <> indent) newline)
+              (letBinding log indentation indent (newline <> indent) blank)
               (Data.List.NonEmpty.init letBindings')
             <> letBinding
               log

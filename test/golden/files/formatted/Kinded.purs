@@ -1,6 +1,6 @@
 module Kinded where
 
-data Foo (a :: Type)
+data Foo (a ∷ Type)
 
 data Bar
-  = Baz (Boolean :: Type)
+  = Baz (Boolean ∷ Type)

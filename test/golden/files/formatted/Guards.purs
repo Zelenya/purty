@@ -1,7 +1,7 @@
 module Guards where
 
-altAppend ::
-  forall a.
+altAppend ∷
+  ∀ a.
   NonEmptyArray (RouteParser a) ->
   NonEmptyArray (RouteParser a) ->
   NonEmptyArray (RouteParser a)

@@ -4,7 +4,7 @@ import Prelude
 
 foo =
   let
-    x :: Int
+    x ∷ Int
     x = 1
 
     y = 3
@@ -16,7 +16,7 @@ bar = do
   let
     y = 3
 
-    z :: Int
+    z ∷ Int
     z = 4
   pure (x + y + z)
 
