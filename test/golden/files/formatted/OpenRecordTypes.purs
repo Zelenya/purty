@@ -2,7 +2,7 @@ module OpenRecordTypes where
 
 foo ∷
   ∀ x.
-  { 
+  {
   | x
   }
 foo = ?foo
