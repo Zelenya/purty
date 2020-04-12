@@ -4,11 +4,12 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 
 module Format
-  ( module'
+  ( format,
   ) where
 
 import qualified Data.List                     as List
 import qualified Data.Semigroup.Foldable
+import qualified "this" Annotation
 import qualified "purescript-cst" Language.PureScript.CST.Print
 import qualified "purescript-cst" Language.PureScript.CST.Types
 import qualified "purs-tool-log" Log
@@ -1028,12 +1029,27 @@ foreign' log span indentation indent' foreign'' = case foreign'' of
     debug log "ForeignValue" foreign'' span
     labeledNameType log indentation indent' labeled'
 
-guarded
-  :: Log.Handle
-  -> Indentation
-  -> Indent
-  -> Language.PureScript.CST.Types.Guarded Span.Span
-  -> IO Utf8Builder
+format ::
+  (Show a) =>
+  Log.Handle ->
+  Indentation ->
+  Language.PureScript.CST.Types.Module a ->
+  IO Utf8Builder
+format log indentation module'' = do
+  Log.debug log "Annotating module"
+  annotated <- Annotation.module' log module''
+  Log.debug log ("Annotated module" <> displayShow annotated)
+  Log.debug log "Formatting module"
+  formatted <- module' log indentation annotated
+  Log.debug log ("Formatted module" <> display formatted)
+  pure formatted
+
+guarded ::
+  Log.Handle ->
+  Indentation ->
+  Indent ->
+  Language.PureScript.CST.Types.Guarded Span.Span ->
+  IO Utf8Builder
 guarded log indentation indent' guarded' = case guarded' of
   Language.PureScript.CST.Types.Guarded guardedExprs -> do
     let indent = indent' <> indentation
