@@ -244,61 +244,77 @@ classFundep log indent classFundep' = case classFundep' of
     foldMap (\name' -> name log indent blank name' <> pure space) names
       <> sourceToken log indent blank arrow
       <> foldMap (name log indent space) names'
-
-classHead
-  :: Log.Handle
-  -> Span.Span
-  -> Indentation
-  -> Indent
-  -> Language.PureScript.CST.Types.ClassHead Span.Span
-  -> IO Utf8Builder
+      
+classHead ::
+  Log.Handle ->
+  Span.Span ->
+  Indentation ->
+  Indent ->
+  Language.PureScript.CST.Types.ClassHead Span.Span ->
+  IO Utf8Builder
 classHead log span indentation indent' classHead' = case classHead' of
-  Language.PureScript.CST.Types.ClassHead class' super name' typeVarBindings fundeps
-    -> do
-      let (indent, prefix) = case span of
-            Span.MultipleLines -> (indent' <> indentation, newline <> indent)
-            Span.SingleLine    -> (indent', space)
-      debug log "ClassHead" classHead' span
-      sourceToken log indent' blank class'
-        <> foldMap
-             (\(constraints, arrow) ->
-               pure prefix
-                 <> oneOrDelimited log
-                                   indent
-                                   SourceRange.constraint
-                                   (constraint log indentation indent)
-                                   constraints
-                 <> sourceToken log indent space arrow
-             )
-             super
-        <> name log indent space name'
-        <> foldMap
-             (\typeVarBinding' ->
-               pure space
-                 <> typeVarBinding log indentation indent typeVarBinding'
-             )
-             typeVarBindings
-        <> foldMap
-             (\(bar, classFundeps) ->
-               sourceToken log indent space bar
-                 <> pure space
-                 <> separated
-                      log
-                      (Span.separated SourceRange.classFundep classFundeps)
-                      indent
-                      space
-                      (classFundep log indent)
-                      classFundeps
-             )
-             fundeps
+  Language.PureScript.CST.Types.ClassHead class' super name' typeVarBindings fundeps -> do
+    let (indent, prefix) = case span of
+          Span.MultipleLines ->
+            (indent' <> indentation, newline <> indent)
+          Span.SingleLine ->
+            (indent', space)
+    debug log "ClassHead" classHead' span
+    sourceToken log indent' blank class'
+      <> foldMap
+        ( \(constraints, arrow) ->
+            pure prefix
+              <> oneOrDelimited
+                log
+                indent
+                SourceRange.constraint
+                (constraint log indentation indent)
+                constraints
+              <> sourceToken log indent space arrow
+        )
+        super
+      <> name log indent space name'
+      <> foldMap
+        ( \typeVarBinding' ->
+            pure space
+              <> typeVarBinding log indentation indent typeVarBinding'
+        )
+        typeVarBindings
+      <> foldMap
+        ( \(bar, classFundeps) ->
+            sourceToken log indent space bar
+              <> pure space
+              <> separated
+                log
+                (Span.separated SourceRange.classFundep classFundeps)
+                indent
+                space
+                (classFundep log indent)
+                classFundeps
+        )
+        fundeps
 
-commentLeading
-  :: Log.Handle
-  -> Indent
-  -> Prefix
-  -> Language.PureScript.CST.Types.Comment
-       Language.PureScript.CST.Types.LineFeed
-  -> IO Utf8Builder
+comment ::
+  Log.Handle ->
+  Language.PureScript.CST.Types.Comment Language.PureScript.CST.Types.LineFeed ->
+  IO (Maybe Utf8Builder)
+comment log comment'' = case comment'' of
+  Language.PureScript.CST.Types.Comment comment' -> do
+    debug log "Comment" comment'' (Span.comment Span.lineFeed comment'')
+    pure (Just (display comment'))
+  Language.PureScript.CST.Types.Line _ -> do
+    Log.debug log "Not formatting `Line`"
+    pure Nothing
+  Language.PureScript.CST.Types.Space _ -> do
+    Log.debug log "Not formatting `Space`"
+    pure Nothing
+
+commentLeading ::
+  Log.Handle ->
+  Indent ->
+  Prefix ->
+  Language.PureScript.CST.Types.Comment Language.PureScript.CST.Types.LineFeed ->
+  IO Utf8Builder
 commentLeading log indent prefix comment'' = case comment'' of
   Language.PureScript.CST.Types.Comment comment' -> do
     debug log "Comment" comment'' (Span.comment Span.lineFeed comment'')
@@ -310,13 +326,13 @@ commentLeading log indent prefix comment'' = case comment'' of
     Log.debug log "Not formatting `Space`"
     pure blank
 
-commentTrailing
-  :: (Show a)
-  => Log.Handle
-  -> (a -> Span.Span)
-  -> Prefix
-  -> Language.PureScript.CST.Types.Comment a
-  -> IO Utf8Builder
+commentTrailing ::
+  (Show a) =>
+  Log.Handle ->
+  (a -> Span.Span) ->
+  Prefix ->
+  Language.PureScript.CST.Types.Comment a ->
+  IO Utf8Builder
 commentTrailing log f prefix comment'' = case comment'' of
   Language.PureScript.CST.Types.Comment comment' -> do
     debug log "Comment" comment'' (Span.comment f comment'')
@@ -328,14 +344,12 @@ commentTrailing log f prefix comment'' = case comment'' of
     Log.debug log "Not formatting `Space`"
     pure blank
 
-commentsLeading
-  :: Log.Handle
-  -> Indent
-  -> Prefix
-  -> [ Language.PureScript.CST.Types.Comment
-         Language.PureScript.CST.Types.LineFeed
-     ]
-  -> IO Utf8Builder
+commentsLeading ::
+  Log.Handle ->
+  Indent ->
+  Prefix ->
+  [Language.PureScript.CST.Types.Comment Language.PureScript.CST.Types.LineFeed] ->
+  IO Utf8Builder
 commentsLeading log indent prefix commentsLeading' = case commentsLeading' of
   [] -> do
     Log.debug log "No leading comments to format"
@@ -344,13 +358,13 @@ commentsLeading log indent prefix commentsLeading' = case commentsLeading' of
     debug log "leading comments" commentsLeading' Span.MultipleLines
     foldMap (commentLeading log indent prefix) commentsLeading'
 
-commentsTrailing
-  :: (Show a)
-  => Log.Handle
-  -> (a -> Span.Span)
-  -> Prefix
-  -> [Language.PureScript.CST.Types.Comment a]
-  -> IO Utf8Builder
+commentsTrailing ::
+  (Show a) =>
+  Log.Handle ->
+  (a -> Span.Span) ->
+  Prefix ->
+  [Language.PureScript.CST.Types.Comment a] ->
+  IO Utf8Builder
 commentsTrailing log f prefix commentsTrailing' = case commentsTrailing' of
   [] -> do
     Log.debug log "No trailing comments to format"
@@ -359,63 +373,41 @@ commentsTrailing log f prefix commentsTrailing' = case commentsTrailing' of
     debug log "trailing comments" commentsTrailing' Span.MultipleLines
     foldMap (commentTrailing log f prefix) commentsTrailing'
 
-commentTrailingFile
-  :: (Show a)
-  => Log.Handle
-  -> (a -> Span.Span)
-  -> Prefix
-  -> Language.PureScript.CST.Types.Comment a
-  -> IO Utf8Builder
-commentTrailingFile log f prefix comment'' = case comment'' of
-  Language.PureScript.CST.Types.Comment comment' -> do
-    debug log "Comment" comment'' (Span.comment f comment'')
-    pure (prefix <> display comment')
-  Language.PureScript.CST.Types.Line _ -> do
-    Log.debug log "Not formatting `Line`"
-    pure blank
-  Language.PureScript.CST.Types.Space _ -> do
-    Log.debug log "Not formatting `Space`"
-    pure blank
-
-commentsTrailingFile
-  :: (Show a)
-  => Log.Handle
-  -> (a -> Span.Span)
-  -> Prefix
-  -> [Language.PureScript.CST.Types.Comment a]
-  -> IO Utf8Builder
-commentsTrailingFile log f prefix commentsTrailing' =
-  case commentsTrailing'' of
-    [] -> do
+commentsTrailingModule ::
+  Log.Handle ->
+  [Language.PureScript.CST.Types.Comment Language.PureScript.CST.Types.LineFeed] ->
+  IO Utf8Builder
+commentsTrailingModule log commentsTrailing' = do
+  comments' <- traverse (comment log) commentsTrailing'
+  case RIO.NonEmpty.nonEmpty (catMaybes comments') of
+    Nothing -> do
       Log.debug log "No trailing comments to format"
       pure blank
-    _ -> do
-      debug log "trailing comments" commentsTrailing' Span.MultipleLines
-      (foldMap (commentTrailingFile log f prefix) commentsTrailing'')
-        <> pure newline
- where
-  isWhiteSpace ct = case ct of
-    Language.PureScript.CST.Types.Comment _ -> False
-    Language.PureScript.CST.Types.Line    _ -> True
-    Language.PureScript.CST.Types.Space   _ -> True
-  commentsTrailing'' = List.dropWhileEnd isWhiteSpace commentsTrailing'
+    Just comments -> do
+      Log.debug log ("Formatting trailing comments" <> fold (RIO.NonEmpty.intersperse newline comments))
+      pure (newline <> fold (RIO.NonEmpty.intersperse newline comments) <> newline)
 
-constraint
-  :: Log.Handle
-  -> Indentation
-  -> Indent
-  -> Language.PureScript.CST.Types.Constraint Span.Span
-  -> IO Utf8Builder
+constraint ::
+  Log.Handle ->
+  Indentation ->
+  Indent ->
+  Language.PureScript.CST.Types.Constraint Span.Span ->
+  IO Utf8Builder
 constraint log indentation indent' constraint' = case constraint' of
   Language.PureScript.CST.Types.Constraint span name' types -> do
     let (indent, prefix) = case span of
-          Span.MultipleLines -> (indent' <> indentation, newline <> indent)
-          Span.SingleLine    -> (indent', space)
+          Span.MultipleLines ->
+            (indent' <> indentation, newline <> indent)
+          Span.SingleLine ->
+            (indent', space)
     debug log "Constraint" constraint' span
     qualifiedName log indent' blank name'
       <> foldMap
-           (\type'' -> pure prefix <> type' log indentation indent type'')
-           types
+        ( \type'' ->
+            pure prefix
+              <> type' log indentation indent type''
+        )
+        types
   Language.PureScript.CST.Types.ConstraintParens span wrapped' -> do
     debug log "ConstraintParens" constraint' span
     parens log span indentation indent' (constraint log indentation) wrapped'
@@ -1532,24 +1524,23 @@ module'
   -> Language.PureScript.CST.Types.Module Span.Span
   -> IO Utf8Builder
 module' log indentation module''' = case module''' of
-  Language.PureScript.CST.Types.Module span module'' name' exports' where'' imports' declarations' trailing
-    -> do
-      debug log "Module" module''' span
-      sourceToken log blank blank module''
-        <> name log blank space name'
-        <> exports log indentation exports'
-        <> sourceToken log blank space where''
-        <> pure newline
-        <> imports log indentation imports'
-        <> declarations log indentation declarations'
-        <> commentsTrailingFile log Span.lineFeed newline trailing
+  Language.PureScript.CST.Types.Module span module'' name' exports' where'' imports' declarations' trailing -> do
+    debug log "Module" module''' span
+    sourceToken log blank blank module''
+      <> name log blank space name'
+      <> exports log indentation exports'
+      <> sourceToken log blank space where''
+      <> pure newline
+      <> imports log indentation imports'
+      <> declarations log indentation declarations'
+      <> commentsTrailingModule log trailing
 
-name
-  :: Log.Handle
-  -> Indent
-  -> Prefix
-  -> Language.PureScript.CST.Types.Name a
-  -> IO Utf8Builder
+name ::
+  Log.Handle ->
+  Indent ->
+  Prefix ->
+  Language.PureScript.CST.Types.Name a ->
+  IO Utf8Builder
 name log indent prefix name'' = case name'' of
   Language.PureScript.CST.Types.Name name' _ -> do
     debug log "Name" name' (Span.name name'')
