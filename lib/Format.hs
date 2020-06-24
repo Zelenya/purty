@@ -709,13 +709,9 @@ doStatement log indentation indent' doStatement' = case doStatement' of
     debug log "DoLet" doStatement' (Span.doStatement doStatement')
     sourceToken log indent' blank let'
       <> foldMap
-        (letBinding log indentation indent (newline <> indent) newline)
+        (letBinding log indentation indent (newline <> indent) blank)
         (Data.List.NonEmpty.init letBindings)
-      <> letBinding
-        log
-        indentation
-        indent
-        (newline <> indent)
+      <> letBinding log indentation indent (newline <> indent)
         blank
         (Data.List.NonEmpty.last letBindings)
 
@@ -1548,7 +1544,7 @@ letIn log span indentation indent' letIn' = case letIn' of
     debug log "LetIn" letIn' span
     sourceToken log indent' blank let'
       <> foldMap
-        (letBinding log indentation indent prefix newline)
+        (letBinding log indentation indent prefix blank)
         (Data.List.NonEmpty.init letBindings)
       <> letBinding
         log
