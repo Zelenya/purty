@@ -33,11 +33,6 @@ useUnicodeColons fa = fa { Language.PureScript.CST.tokValue = token }
    where
      token = Language.PureScript.CST.TokDoubleColon Language.PureScript.CST.Unicode
 
--- useUnicodeColons2 :: Language.PureScript.CST.Declaration Span.Span -> Language.PureScript.CST.Declaration Span.Span
--- useUnicodeColons2 fa = fa { Language.PureScript.CST.tokValue = token }
---    where
---      token = Language.PureScript.CST.TokDoubleColon Language.PureScript.CST.Unicode
-
 adoBlock ::
   Log.Handle ->
   Span.Span ->
@@ -546,7 +541,6 @@ declaration log indentation indent'' declaration' = case declaration' of
       <> foldMap (sourceToken log indent'' space) newtype'
       <> pure space
       <> instanceHead log indentation indent'' instanceHead'
-      -- <> pure newline
   Language.PureScript.CST.DeclFixity span fixityFields' -> do
     debug log "DeclFixity" declaration' span
     fixityFields log indent'' fixityFields'
@@ -584,7 +578,7 @@ declaration log indentation indent'' declaration' = case declaration' of
           space
     debug log "DeclNewtype" declaration' span
     dataHead log indentation indent'' dataHead'
-      <> pure (newline <> indent')
+      <> pure space
       <> sourceToken log indent' blank equals
       <> pure space
       <> name log indent' blank name'
@@ -597,14 +591,12 @@ declaration log indentation indent'' declaration' = case declaration' of
   Language.PureScript.CST.DeclType span dataHead' equals type'' -> do
     let
       indent' = indent'' <> indentation
-
-      indent = indent' <> indentation
     debug log "DeclType" declaration' span
     dataHead log indentation indent'' dataHead'
-      <> pure (newline <> indent')
-      <> sourceToken log indent' blank equals
       <> pure space
-      <> type' log indentation indent type''
+      <> sourceToken log indent' blank equals
+      <> pure (newline <> indent')
+      <> type' log indentation indent' type''
       <> pure newline
   Language.PureScript.CST.DeclValue span valueBindingFields' -> do
     debug log "DeclValue" declaration' span
@@ -711,8 +703,7 @@ doStatement log indentation indent' doStatement' = case doStatement' of
       <> foldMap
         (letBinding log indentation indent (newline <> indent) blank)
         (Data.List.NonEmpty.init letBindings)
-      <> letBinding log indentation indent (newline <> indent)
-        blank
+      <> (letBinding log indentation indent (newline <> indent) blank)
         (Data.List.NonEmpty.last letBindings)
 
 export ::
@@ -2093,6 +2084,7 @@ where' log indentation indent' where''' = case where''' of
   Language.PureScript.CST.Where expr' letBindings'' -> do
     let
       indent = indent' <> indentation
+      indentI = indent <> indentation
     debug log "Where" where''' (Span.where' where''')
     exprPrefix log (Span.expr expr') indentation indent' expr'
       <> foldMap
@@ -2100,14 +2092,9 @@ where' log indentation indent' where''' = case where''' of
           pure (newline <> indent)
             <> sourceToken log indent blank where''
             <> foldMap
-              (letBinding log indentation indent (newline <> indent) blank)
+              (letBinding log indentation indentI (newline <> indentI) newline)
               (Data.List.NonEmpty.init letBindings')
-            <> letBinding
-              log
-              indentation
-              indent
-              (newline <> indent)
-              blank
+            <> (letBinding log indentation indentI (newline <> indentI) blank)
               (Data.List.NonEmpty.last letBindings')
         )
         letBindings''

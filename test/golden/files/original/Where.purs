@@ -1,6 +1,14 @@
 module Where where
 
-foo = x
+foo = withoutType1
   where
-  x = y
-  y = 1
+    withoutType1 = 1
+    withoutType2 = 1
+
+    withType1 :: Int
+    withType1 = 3
+
+    withoutType3 = 1
+
+    withType2 :: Int
+    withType2 = 3

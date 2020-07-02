@@ -2,6 +2,11 @@ module Let where
 
 import Prelude
 
+shortLet = do
+  let
+    x = 12
+  pure x
+
 foo =
   let
     x ∷ Int
