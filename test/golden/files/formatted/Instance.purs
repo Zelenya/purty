@@ -8,8 +8,7 @@ instance barBaz ∷ Bar Baz where
   bar = append
 
 derive instance eqBaz ∷ Eq Baz
-newtype Bar
-  = Bar Baz
+newtype Bar = Bar Baz
 
 derive newtype instance eqBar ∷ Eq Bar
 instance quxCorGarIntBool ∷

@@ -16,8 +16,7 @@ data X
   | X2 {- A block comment on a construction -} {-Another block comment on the same constructor-}
 
 {- | A Line comment on a newtype -}
-newtype Y
-  = Y X
+newtype Y = Y X
 
 -- A Line comment on a fixity
 infix 0 y as !
@@ -30,8 +29,8 @@ instance foo ∷
   Foo
 
 {- A Block comment on a synonym -}
-type Z
-  = Y
+type Z =
+  Y
 
 -- | Another line comment.
 x = X

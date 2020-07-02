@@ -1,10 +1,9 @@
 module TypeSynonymNewline where
 
-type T
-  = {foo :: Int, bar :: {baz :: Int, qux :: {lhs :: Int, rhs :: Int}}}
+type T = {foo :: Int, bar :: {baz :: Int, qux :: {lhs :: Int, rhs :: Int}}}
 
-type U
-  = {foo :: Int, bar :: {baz :: Int, qux ::
+type U =
+  {foo :: Int, bar :: {baz :: Int, qux ::
                             {lhs :: Int, rhs :: Int}}}
 
 t :: T
