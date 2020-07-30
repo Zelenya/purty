@@ -8,6 +8,7 @@ instance barBaz :: Bar Baz where
   bar = append
 
 derive instance eqBaz :: Eq Baz
+derive instance showBaz :: Show Baz
 
 newtype Bar = Bar Baz
 
