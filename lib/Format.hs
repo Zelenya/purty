@@ -10,6 +10,7 @@ import qualified Language.PureScript.CST as CST
 import qualified "this" Log
 import qualified "this" SourceRange
 import qualified "this" Span
+import qualified Data.List as List
 
 type Indent
   = Utf8Builder
@@ -541,6 +542,7 @@ declaration log indentation indent'' declaration' = case declaration' of
       <> foldMap (sourceToken log indent'' space) newtype'
       <> pure space
       <> instanceHead log indentation indent'' instanceHead'
+      <> pure newline
   Language.PureScript.CST.DeclFixity span fixityFields' -> do
     debug log "DeclFixity" declaration' span
     fixityFields log indent'' fixityFields'
@@ -616,12 +618,13 @@ declarations log indentation declarations' = case declarations' of
     let
       indent = blank
     debug log "declarations" declarations' Span.MultipleLines
+
     foldMap
-      (\declaration' ->
-        pure newline
-          <> declaration log indentation indent declaration'
-      )
-      declarations'
+      ((pure newline <>) . foldMap (declaration log indentation indent))
+      $ List.groupBy bothDerive declarations'
+  where
+     bothDerive (CST.DeclDerive _ _ _ _) (CST.DeclDerive _ _ _ _) = True
+     bothDerive _ _ = False
 
 delimited ::
   (Show a) =>
@@ -1858,9 +1861,9 @@ row log span indentation indent row' = case row' of
 
 unicodifySrcTok :: CST.SourceToken -> CST.SourceToken
 unicodifySrcTok separator = case CST.tokValue separator of
-    CST.TokDoubleColon _ -> 
+    CST.TokDoubleColon _ ->
       separator { CST.tokValue = CST.TokDoubleColon CST.Unicode }
-    CST.TokForall _ -> 
+    CST.TokForall _ ->
       separator { CST.tokValue = CST.TokForall CST.Unicode }
     _ -> separator
 
