@@ -702,12 +702,21 @@ doStatement log indentation indent' doStatement' = case doStatement' of
     let
       indent = indent' <> indentation
     debug log "DoLet" doStatement' (Span.doStatement doStatement')
-    sourceToken log indent' blank let'
-      <> foldMap
-        (letBinding log indentation indent (newline <> indent) blank)
-        (Data.List.NonEmpty.init letBindings)
-      <> (letBinding log indentation indent (newline <> indent) blank)
-        (Data.List.NonEmpty.last letBindings)
+    case letBindings of
+      (Language.PureScript.CST.LetBindingName Span.SingleLine _) Data.List.NonEmpty.:| [] -> 
+        sourceToken log indent' blank let' <> (letBinding log indentation indent space blank) (Data.List.NonEmpty.head letBindings)
+      (Language.PureScript.CST.LetBindingPattern Span.SingleLine _ _ _) Data.List.NonEmpty.:| [] -> 
+        sourceToken log indent' blank let' <> (letBinding log indentation indent space blank) (Data.List.NonEmpty.head letBindings)
+      -- Can this even happen?
+      (Language.PureScript.CST.LetBindingSignature Span.SingleLine _) Data.List.NonEmpty.:| [] -> 
+        sourceToken log indent' blank let' <> (letBinding log indentation indent space blank) (Data.List.NonEmpty.head letBindings)
+      _ ->
+        sourceToken log indent' blank let'
+          <> foldMap
+            (letBinding log indentation indent (newline <> indent) blank)
+            (Data.List.NonEmpty.init letBindings)
+          <> (letBinding log indentation indent (newline <> indent) blank)
+            (Data.List.NonEmpty.last letBindings)
 
 export ::
   Log.Handle ->
