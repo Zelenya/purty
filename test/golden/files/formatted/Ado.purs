@@ -1,8 +1,7 @@
 module Ado where
 
 foo = ado
-  let
-    w = 0
+  let w = 0
   x <- pure 1
   y <- do
     pure 2
