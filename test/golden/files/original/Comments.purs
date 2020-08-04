@@ -34,9 +34,13 @@ type Z = Y
 -- | Another line comment.
 x = X
 
+-- do not squash
+
 {- A block comment on a type -}
 y :: Y -> Y -> Y
 y _ _ = Y
+
+
 
 -- Some commented code at the end of the file
 -- z :: 25
