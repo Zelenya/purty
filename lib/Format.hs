@@ -386,46 +386,6 @@ commentsTrailing log f prefix commentsTrailing' = case commentsTrailing' of
     debug log "trailing comments" commentsTrailing' Span.MultipleLines
     foldMap (commentTrailing log f prefix) commentsTrailing'
 
-commentTrailingFile ::
-  (Show a) =>
-  Log.Handle ->
-  (a -> Span.Span) ->
-  Prefix ->
-  Language.PureScript.CST.Comment a ->
-  IO Utf8Builder
-commentTrailingFile log f prefix comment'' = case comment'' of
-  Language.PureScript.CST.Comment comment' -> do
-    debug log "Comment" comment'' (Span.comment f comment'')
-    pure (prefix <> display comment')
-  Language.PureScript.CST.Line _ -> do
-    Log.debug log "Not formatting `Line`"
-    pure blank
-  Language.PureScript.CST.Space _ -> do
-    Log.debug log "Not formatting `Space`"
-    pure blank
-
-commentsTrailingFile ::
-  (Show a) =>
-  Log.Handle ->
-  (a -> Span.Span) ->
-  Prefix ->
-  [Language.PureScript.CST.Comment a] ->
-  IO Utf8Builder
-commentsTrailingFile log f prefix commentsTrailing' = 
-  case commentsTrailing'' of
-  [] -> do
-    Log.debug log "No trailing comments to format"
-    pure blank
-  _ -> do
-    debug log "trailing comments" commentsTrailing' Span.MultipleLines
-    (foldMap (commentTrailingFile log f prefix) commentsTrailing'') <> pure newline
-  where
-    isWhiteSpace ct = case ct of 
-      Language.PureScript.CST.Comment _ -> False
-      Language.PureScript.CST.Line _ -> True
-      Language.PureScript.CST.Space _ -> True
-    commentsTrailing'' = List.dropWhileEnd isWhiteSpace commentsTrailing'
-
 constraint ::
   Log.Handle ->
   Indentation ->
@@ -1616,7 +1576,7 @@ module' log indentation module''' = case module''' of
       <> pure newline
       <> imports log indentation imports'
       <> declarations log indentation declarations'
-      <> commentsTrailingFile log Span.lineFeed newline trailing
+      <> commentsTrailing log Span.lineFeed blank trailing
 
 name ::
   Log.Handle ->

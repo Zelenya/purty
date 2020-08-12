@@ -37,7 +37,3 @@ x = X
 {- A block comment on a type -}
 y :: Y -> Y -> Y
 y _ _ = Y
-
--- Some commented code at the end of the file
--- z :: 25
--- z = 12
