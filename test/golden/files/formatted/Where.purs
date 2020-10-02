@@ -12,4 +12,5 @@ foo = withoutType1
     withoutType3 = 1
 
     withType2 ∷ Int
-    withType2 = 3
+    withType2 1 = 41
+    withType2 _ = 42
