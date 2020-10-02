@@ -69,6 +69,7 @@ library:
     - purescript == 0.13.2
     - rio == 0.1.9.2
     - text == 1.2.3.1
+    - semigroupoids == 5.3.4
   source-dirs: lib
 license: BSD3
 maintainer: jones3.hardy@gmail.com

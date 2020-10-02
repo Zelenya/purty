@@ -11,6 +11,7 @@ import qualified "this" Log
 import qualified "this" SourceRange
 import qualified "this" Span
 import qualified Data.List as List
+import qualified Data.Semigroup.Foldable
 
 type Indent
   = Utf8Builder
@@ -1543,6 +1544,24 @@ lambda log span indentation indent' lambda' = case lambda' of
       <> sourceToken log indent' blank arrow
       <> exprPrefix log span indentation indent' expr'
 
+getLetBindingName :: Language.PureScript.CST.LetBinding a -> Maybe CST.Ident
+getLetBindingName (Language.PureScript.CST.LetBindingName _ valueBindingFields') = Just $ CST.nameValue (CST.valName valueBindingFields')
+getLetBindingName (Language.PureScript.CST.LetBindingPattern _ _ _ _) = Nothing
+getLetBindingName (Language.PureScript.CST.LetBindingSignature _ labeled') = Just $ CST.nameValue (CST.lblLabel labeled')
+
+isLetBindingSignature :: Language.PureScript.CST.LetBinding a -> Bool
+isLetBindingSignature (Language.PureScript.CST.LetBindingName _ _) = False
+isLetBindingSignature (Language.PureScript.CST.LetBindingPattern _ _ _ _) = False
+isLetBindingSignature (Language.PureScript.CST.LetBindingSignature _ _) = True
+
+groupLetBindingsBySymbol :: Data.List.NonEmpty.NonEmpty (Language.PureScript.CST.LetBinding a) -> Data.List.NonEmpty.NonEmpty (Data.List.NonEmpty.NonEmpty (Language.PureScript.CST.LetBinding a))
+groupLetBindingsBySymbol = fmap signatureFirst . Data.List.NonEmpty.groupWith1 getLetBindingName
+  where
+    signatureFirst :: Data.List.NonEmpty.NonEmpty (Language.PureScript.CST.LetBinding a) -> Data.List.NonEmpty.NonEmpty (Language.PureScript.CST.LetBinding a)
+    signatureFirst xs =
+      let (sigs, defs) = Data.List.NonEmpty.partition isLetBindingSignature xs
+      in Data.List.NonEmpty.fromList (sigs <> defs) -- it is safe to call `fromList` since we're merging the components of a non-empty list
+
 letBinding ::
   Log.Handle ->
   Indentation ->
@@ -2140,16 +2159,28 @@ where' log indentation indent' where''' = case where''' of
     debug log "Where" where''' (Span.where' where''')
     exprPrefix log (Span.expr expr') indentation indent' expr'
       <> foldMap
-        (\(where'', letBindings') ->
+        (\(where'', letBindings') -> do
+          let groupedLetBindings = Data.Semigroup.Foldable.fold1 $ groupLetBindingsBySymbol letBindings'
           pure (newline <> indent)
             <> sourceToken log indent blank where''
             <> foldMap
-              (letBinding log indentation indentI (newline <> indentI) newline)
-              (Data.List.NonEmpty.init letBindings')
+              (\p@(binding, _) ->
+                  letBinding log indentation indentI (newline <> indentI) (if successorIsForSameName p then mempty else newline) binding)
+              (Data.List.NonEmpty.init $ withSuccessor groupedLetBindings)
             <> (letBinding log indentation indentI (newline <> indentI) blank)
-              (Data.List.NonEmpty.last letBindings')
+              (Data.List.NonEmpty.last groupedLetBindings)
         )
         letBindings''
+  where
+    -- pairs each element with a `Just` of its successor, the last element is paired with `Nothing`
+    withSuccessor :: Data.List.NonEmpty.NonEmpty a -> Data.List.NonEmpty.NonEmpty (a, Maybe a)
+    withSuccessor xs = Data.List.NonEmpty.zip xs $ Data.List.NonEmpty.fromList ((Just <$> Data.List.NonEmpty.tail xs) <> [Nothing])
+
+    successorIsForSameName :: (Language.PureScript.CST.LetBinding a, Maybe (Language.PureScript.CST.LetBinding a)) -> Bool
+    successorIsForSameName (current, next) = maybe True (sameSymbol current) next
+
+    sameSymbol :: Language.PureScript.CST.LetBinding a -> Language.PureScript.CST.LetBinding a -> Bool
+    sameSymbol = on (==) getLetBindingName
 
 wrapped ::
   (Show a) =>
