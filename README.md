@@ -1,68 +1,70 @@
-# purty
-[![pipeline status](https://gitlab.com/joneshf/purty/badges/master/pipeline.svg)](https://gitlab.com/joneshf/purty/commits/master)
-[![Build Status](https://travis-ci.org/joneshf/purty.svg?branch=master)](https://travis-ci.org/joneshf/purty)
-[![Build status](https://ci.appveyor.com/api/projects/status/x1882rn32ggamxuu?svg=true)](https://ci.appveyor.com/project/joneshf/purty)
-[![coverage report](https://gitlab.com/joneshf/purty/badges/master/coverage.svg)](https://gitlab.com/joneshf/purty/commits/master)
-[![Download](https://api.bintray.com/packages/joneshf/generic/purty/images/download.svg)](https://bintray.com/joneshf/generic/purty/_latestVersion)
+# Purty fork
 
-## What is it?
-
-A source code formatter for PureScript.
+Very opinionated fork of [Purty](https://gitlab.com/joneshf/purty). A source code formatter for PureScript
 
 ## Installation
 
-### npm
+### Sources
 
-You can install the [npm package](https://www.npmjs.com/package/purty)
-
-```sh
-npm install purty
+```
+git clone https://github.com/Zelenya/purty.git
+cd purty
 ```
 
-### Precompiled Binary
+Then, you need to build it using Stack
+```
+stack build
+```
 
-Binaries are available from [Bintray](https://bintray.com/joneshf/generic/purty/_latestVersion#files)
+Probably, you can find your executables like this
+```
+echo "$(stack path --local-install-root)/bin/purty"
+```
 
 ## Usage
 
-You can format a file by invoking `purty` with the path to the file.
+### VSCode
 
-For instance, if you had a `Main` module in a `src` directory, you could say:
+0. Get VSCode
+1. Enable `vscode-purty` extension
+2. Open the extension's settings and set `Purty: Path To Purty`
+3. Open settings and enable `Editor: Format On Save`
 
-```sh
-purty src/Main.purs
+### Manual (for some reason)
+
+To format the module and write it back to the same file:
 ```
-
-This will write the formatted module to STDOUT.
-If you'd like to format the module and write it back to the same file, you can use the `--write` option:
-
-```sh
 purty --write src/Main.purs
 ```
 
-This will write the formatted module to `src/Main.purs`.
-
-A listing of all available options can be shown with the `--help` option
-
-```sh
-purty --help
+To format a lot
+```
+for i in **/*.purs; do purty --write $i; done
 ```
 
-## Configuration
+## Format
 
-You can configure most options with a [Dhall][] file.
+```
+import Prelude
 
-The file must be named `.purty.dhall` and it must be in the directory where you're invoking `purty`.
+data Data
+  = Joy
+  | Meh
 
-Since the configuration is a [Dhall][] file, all of the guarantees and power of [Dhall][] is available.
-You can reference any other [Dhall][] file on the internet, you can compute the values, you can type the configuration, etc.
+derive instance dataEq ∷ Eq Data
+derive instance dataOrd ∷ Ord Data
 
-For more information about [Dhall][] and what it provides, see the [Dhall tutorial][].
+type ThisLine =
+  { random ∷ Data }
 
-## How does it format?
+example ∷ ∀ a. a -> Data
+example = do
+  let dontJump = "toNewLine"
+  pure Joy
+  where
+    whereHasIdentation = true
 
-For examples of how `purty` formats, see the [golden tests][].
-
-[Dhall]: https://dhall-lang.org
-[Dhall tutorial]: https://hackage.haskell.org/package/dhall-1.23.0/docs/Dhall-Tutorial.html
-[golden tests]: ./test/golden/files
+    withType ∷ Int -> Int
+    withType 1 = 3
+    withType _ = 42
+```
