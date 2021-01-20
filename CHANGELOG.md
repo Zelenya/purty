@@ -6,7 +6,7 @@
 
 ### Changes
 
-* [Change formatting goals/non-goals to have links](https://gitlab.com/joneshf/purty/-/issues/227)
+* [Fix AppVeyor image again](https://gitlab.com/joneshf/purty/-/issues/228)
 
 ### Deletions
 
