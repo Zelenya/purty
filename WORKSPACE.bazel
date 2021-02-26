@@ -169,6 +169,7 @@ stack_snapshot(
         "optparse-applicative",
         "pathwalk",
         "rio",
+        "semigroupoids",
         # `purescript-ast` dependencies
         # These have to be here so the `//third_party/purescript:purescript-ast` package can pick them up.
         # If we ever can get rid of the `//third_party/purescript:purescript-ast` package,

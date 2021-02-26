@@ -38,6 +38,7 @@ haskell_library(
         ":base",
         "@stackage//:purescript-cst",
         "@stackage//:rio",
+        "@stackage//:semigroupoids",
     ],
     hidden_modules = [
         "Annotation",
